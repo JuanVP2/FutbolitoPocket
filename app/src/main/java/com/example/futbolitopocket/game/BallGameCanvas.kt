@@ -1,4 +1,4 @@
-package com.example.futbolitopocket
+package com.example.futbolitopocket.game
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -14,15 +14,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.futbolitopocket.R
 import kotlinx.coroutines.delay
 import dev.ricknout.composesensors.accelerometer.rememberAccelerometerSensorValueAsState
 
 @Composable
 fun BallGameCanvas() {
-    // 1) Acelerómetro (compose-sensors)
+    // Acelerómetro (compose-sensors)
     val sensorValue by rememberAccelerometerSensorValueAsState()
 
-    // 2) Estados para marcadores y pelota
+    // Estados para marcadores y pelota
     var scoreTop by remember { mutableStateOf(0) }
     var scoreBottom by remember { mutableStateOf(0) }
 
@@ -36,9 +37,9 @@ fun BallGameCanvas() {
     // Parámetros de física
     val sensitivity = 1.5f
     val friction = 0.92f
-    val restitution = 0.7f
+    val restitution = 0.9f
 
-    // 3) Bucle de actualización
+    // Bucle de actualización
     LaunchedEffect(sensorValue) {
         while (true) {
             if (canvasSize.width > 0 && !isInitialized) {
@@ -68,7 +69,7 @@ fun BallGameCanvas() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // 4) Imagen de fondo
+        // Imagen de fondo
         Image(
             painter = painterResource(R.drawable.medidas_campo_de_futbol),
             contentDescription = "Campo de Fútbol",
@@ -76,7 +77,7 @@ fun BallGameCanvas() {
             contentScale = ContentScale.Crop
         )
 
-        // 5) Canvas para pelota y colisiones
+        // Canvas para pelota y colisiones
         Canvas(modifier = Modifier.fillMaxSize()) {
             canvasSize = size
 
@@ -102,7 +103,7 @@ fun BallGameCanvas() {
                 velocityX = -velocityX * restitution
             }
 
-            // PORTERÍA SUPERIOR
+            // Portería arriba
             if (ballY - ballRadius < topBound) {
                 // Ancho de la portería
                 val goalWidth = (rightBound - leftBound) * 0.3f
@@ -122,7 +123,7 @@ fun BallGameCanvas() {
                     velocityY = -velocityY * restitution
                 }
             }
-            // PORTERÍA INFERIOR
+            // Portería abajo
             else if (ballY + ballRadius > bottomBound) {
                 val goalWidth = (rightBound - leftBound) * 0.3f
                 val goalLeftX = leftBound + ((rightBound - leftBound) - goalWidth) / 2f
@@ -150,7 +151,7 @@ fun BallGameCanvas() {
             )
         }
 
-        // 6) Marcador de la portería de ARRIBA
+        //  Marcador de la portería de arriba
         Text(
             text = "Marcador 1: $scoreTop",
             modifier = Modifier
@@ -160,7 +161,7 @@ fun BallGameCanvas() {
             textAlign = TextAlign.Center
         )
 
-        // 7) Marcador de la portería de ABAJO
+        // 7) Marcador de la portería de abajo
         Text(
             text = "Marcador 2: $scoreBottom",
             modifier = Modifier
